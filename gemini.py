@@ -48,19 +48,30 @@ feedback = model_f.start_chat(history=[])
 
 tool     = "Python"
 template = "In " + tool + " , create the following game:\n"
-questao  = "It's a game named jdv. In this game, 2 players take turns placing their pieces in a free space of a 3x3 grid, until one of them makes a line with 3 (horizontally, vertically or diagonally) adjacent pieces, in which case the person that made the line loses, and the opponent is the winner. If there are no more free spaces, the game is declared a draw."
-task     = template + questao
+# game     = "It's a game named jdv. In this game, 2 players take turns placing their pieces in a free space of a 3x3 grid, until one of them makes a line with 3 (horizontally, vertically or diagonally) adjacent pieces, in which case the person that made the line loses, and the opponent is the winner. If there are no more free spaces, the game is declared a draw."
+game     = "It's a game named pong. In this game, 2 players take turns placing their pieces at the lowest free space of any collumn of a 10x10 grid, until one of them makes a line with 3 (horizontally, vertically or diagonally) adjacent pieces, in which case the person that made the line loses, and the opponent is the winner. If there are no more free spaces, the game is declared a draw."
+task     = template + game
 coder.send_message(task)
 
+import os
+if not os.path.isdir("outputs"): 
+    os.makedirs("outputs") 
+
+f = open("outputs/first_out.py", "w")
+f.write(coder.last.text[coder.last.text.find('\n')+1:coder.last.text.rfind('\n')])
+f.close()
+
 def get_critcs(codigo):
-  feedback.send_message("Give a feedback about this game, made on " + tool + ":\n" + codigo + "\n\nWhich was developed to fullfill this task:\n" + task + "\nRemember it has to be in " + tool)
+  feedback.send_message("Give a feedback about this game, made on " + tool + ":\n" + codigo + "\n\nWhich was developed to fullfill this task:\n" + task + "\nRemember it has to be in " + tool + " and it has to follow the stipulated rules")
   return feedback.last.text
 
-iter = 5
+iter = 10
 while iter > 0:
   codigo = coder.last.text
   critcs = get_critcs(codigo)
   coder.send_message("Rectify this game, made on " + tool + ":\n" + codigo + "\n\nFollowing the criticism:\n" + critcs + "\n\nThe game has to be in " + tool)
   iter -= 1
 
-print(coder.last.text)
+f = open("outputs/final_out.py", "w")
+f.write(coder.last.text[coder.last.text.find('\n')+1:coder.last.text.rfind('\n')])
+f.close()
